@@ -10,15 +10,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 public class Room_List extends Fragment {
 
-
+    ArrayList<Room_ListClass> rooms  = new ArrayList<Room_ListClass>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_room__list, container, false);
-
+        View view= inflater.inflate(R.layout.fragment_room__list, container, false);
+        setInitialData();
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        // создаем адаптер
+        Room_ListAdapter adapter = new Room_ListAdapter(getActivity(), rooms);
+        // устанавливаем для списка адаптер
+        recyclerView.setAdapter(adapter);
 
         return view;
+    }
+    private void setInitialData(){
+
+        rooms.add(new Room_ListClass ("Игра1", 3, 4,"Аниме"));
+        rooms.add(new Room_ListClass ("Бартья", 2, 4,"Аниме"));
+        rooms.add(new Room_ListClass ("Игра1", 3, 4,"Аниме"));
+        rooms.add(new Room_ListClass ("Бартья", 2, 4,"Аниме"));
     }
 }

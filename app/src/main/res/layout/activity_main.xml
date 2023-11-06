@@ -12,18 +12,35 @@
         android:id="@+id/header"
         android:background="@color/bar">
 
+
+
         <TextView
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="-4dp"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Alexandr Cheban"
-            android:textSize="20dp"
             android:gravity="center"
-            >
-
+            android:text="Alexandr Cheban"
+            android:textSize="20dp">
         </TextView>
+        <TextView
+            android:id="@+id/responseTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="-4dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:text="ыываыв"
+            android:textSize="15sp"/>
     </RelativeLayout>
     <FrameLayout
         android:id="@+id/mainWindow"
