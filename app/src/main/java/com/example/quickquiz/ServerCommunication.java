@@ -1,4 +1,5 @@
 package com.example.quickquiz;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -6,53 +7,114 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ServerCommunication extends AsyncTask<Void, Void, String> {
-    private static final String TAG = "ServerTask";
-    private String serverAddress;
-    private int serverPort;
-    private String messageToSend;
+public class ServerCommunication {
+    private static final String SERVER_IP = "82.179.140.18";
+    private static final int SERVER_PORT = 45112;
 
-    public ServerCommunication(String serverAddress, int serverPort, String messageToSend) {
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
-        this.messageToSend = messageToSend;
+    private Socket socket;
+    private PrintWriter out;
+    private BufferedReader in;
+
+    // Добавляем статическую переменную instance
+    private static ServerCommunication instance;
+
+    // Делаем конструктор приватным
+    private ServerCommunication() {
+        new ConnectTask().execute();
     }
 
-    @Override
-    protected String doInBackground(Void... params) {
+    // Добавляем статический метод getInstance
+    public static synchronized ServerCommunication getInstance() {
+        if (instance == null) {
+            instance = new ServerCommunication();
+        }
+        return instance;
+    }
+    public void sendMessage(String message) {
+        // Отправка сообщения выполняется по запросу
+        new SendMessageTask().execute(message);
+    }
+
+    public void receiveMessage() {
+        // Получение сообщения выполняется по запросу
+        new ReceiveMessageTask().execute();
+    }
+
+    public void closeConnection() {
         try {
-            Socket socket = new Socket(serverAddress, serverPort);
-
-            // Получаем потоки ввода и вывода
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            OutputStream outputStream = socket.getOutputStream();
-
-            // Отправляем сообщение серверу
-            outputStream.write(messageToSend.getBytes());
-
-            // Ждем ответа от сервера
-            String response = reader.readLine();
-
-            // Закрываем соединение
-            socket.close();
-
-            return response;
-        } catch (UnknownHostException e) {
-            Log.e(TAG, "UnknownHostException: " + e.getMessage());
-            return "Error: UnknownHostException";
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
         } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
-            return "Error: IOException";
+            e.printStackTrace();
         }
     }
 
-    @Override
-    protected void onPostExecute(String result) {
-        // Обработка ответа от сервера
-        Log.d(TAG, "Server response: " + result);
-        // Здесь вы можете обновить пользовательский интерфейс или выполнить другие действия с полученными данными.
+    private class ConnectTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                // Подключение к серверу
+                socket = new Socket(SERVER_IP, SERVER_PORT);
+                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            } catch (UnknownHostException e) {
+                Log.e("ConnectTask", "UnknownHostException: " + e.getMessage());
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e("ConnectTask", "IOException: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private class SendMessageTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... messages) {
+            try {
+                // Отправка сообщения
+                out.println(messages[0]);
+            } catch (Exception e) {
+                Log.e("SendMessageTask", "Exception: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    // Добавляем интерфейс для обратного вызова
+    public interface MessageListener {
+        void onMessageReceived(String message);
+    }
+
+    private MessageListener messageListener;
+
+    public void setMessageListener(MessageListener listener) {
+        this.messageListener = listener;
+    }
+    private class ReceiveMessageTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                // Получение сообщения
+                return in.readLine();
+            } catch (IOException e) {
+                Log.e("ReceiveMessageTask", "IOException: " + e.getMessage());
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+            // Вызываем обратный вызов, когда сообщение получено
+            if (messageListener != null) {
+                messageListener.onMessageReceived(message);
+            }
+        }
     }
 }

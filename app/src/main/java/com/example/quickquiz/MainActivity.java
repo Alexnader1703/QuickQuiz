@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,26 +30,20 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
+import com.example.quickquiz.ConnectionManager;
 public class MainActivity extends AppCompatActivity {
 
     private TextView responseTextView;
-    private ServerCommunication serverCommunication;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        String serverAddress = "82.179.140.18"; // Замените на реальный IP вашего сервера
-        int serverPort = 45103; // Замените YOUR_SERVER_PORT на реальный порт вашего сервера
-        String messageToSend = "Hello from Android!";
-
-        ServerCommunication serverTask = new ServerCommunication(serverAddress, serverPort, messageToSend);
-        serverTask.execute();
-
-        Room_List game_rooms = new Room_List();
-        SetNewFrag(game_rooms);
+        SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+        boolean loggedIn = prefs.getBoolean("loggedIn", false);
+        if (!loggedIn) {
+            Intent mainIntent = new Intent(MainActivity.this, Autorization.class);
+            startActivity(mainIntent);
+        }
     }
 
 
