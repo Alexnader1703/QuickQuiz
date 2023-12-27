@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,54 +18,54 @@ public class Autorization extends AppCompatActivity {
     private String sqlQuery;
     private String result;
     private ProgressDialog progressDialog;
-    private ServerCommunication serverCommunication;
+    ServerCommunication serverConnector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autorization);
 
-        Button loginButton=findViewById(R.id.login);
-        // Получаем экземпляр ServerCommunication
-        serverCommunication = ServerCommunication.getInstance();
+        Button loginButton = findViewById(R.id.login);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText log= findViewById(R.id.editTextLogin);
-                EditText pas= findViewById(R.id.editTextPassword);
-                sqlQuery = "login:SELECT * FROM users WHERE login = '"+log.getText()+"' AND pass = '"+ pas.getText()+"';";
-                //progressDialog = ProgressDialog.show(Autorization.this, "Please wait...", "Logging in...");
-                serverCommunication.setMessageListener(new ServerCommunication.MessageListener() {
+
+                progressDialog = ProgressDialog.show(Autorization.this, "Please wait...", "Logging in...");
+                progressDialog.dismiss();
+                EditText log = findViewById(R.id.editTextLogin);
+                EditText pas = findViewById(R.id.editTextPassword);
+                sqlQuery = "login:SELECT * FROM users WHERE login = '" + log.getText() + "' AND pass = '" + pas.getText() + "';";
+
+                // Создаем новый поток для отправки запроса на сервер и получения ответа
+                new Thread(new Runnable() {
                     @Override
-                    public void onMessageReceived(String message) {
-                        // Скрыть индикатор загрузки
-                        //progressDialog.dismiss();
+                    public void run() {
+                        try {
+                            serverConnector = ServerCommunication.getInstance();
+                            serverConnector.sendMessage(sqlQuery);
+                            String response = serverConnector.receiveMessage();
+                            SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
+                            // Проверяем ответ сервера
+                            if (response.equals("true")) {
 
-                        // Добавляем логирование
-                        Log.d("Autorization", "Received message from server: " + message);
-
-                        // Обработка сообщения от сервера
-                        if (message != null && message.equals("true")) {
-                            Log.d("Autorization", "Login successful.");
-
-                            // Сохранить состояние входа в систему
-                            SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
-                            prefs.edit().putBoolean("loggedIn", true).apply();
-
-                            // Переход на следующую активность
-                            Intent intent = new Intent(Autorization.this, MainActivity.class);
-                            startActivity(intent);
-
-                        } else {
-                            Log.d("Autorization", "Login failed.");
-
-                            // Показать сообщение об ошибке
-                            Toast.makeText(Autorization.this, "Login failed", Toast.LENGTH_SHORT).show();
+                                Log.d("Авторизация", "Успешная авторизация");
+                                // Сохранить состояние входа в систему
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("loggedIn", true);
+                                editor.putString("login", log.getText().toString());
+                                editor.apply();
+                                // Переход на следующую активность
+                                Intent intent = new Intent(Autorization.this, MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Log.d("Авторизация", "Авторизация не удалась");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                });
-                serverCommunication.sendMessage(sqlQuery);
-
-
+                }).start();
             }
         });
 
