@@ -195,10 +195,10 @@ public class QuizActivity extends AppCompatActivity {
     private  void showResult(){
         String message = "Поздравляем! Вы ответили правильно на " + correctAnswersCount + " вопросов! Вы прошли тест за " + time.getText() + ". Продолжайте в том же духе!";
         SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
-        int literatureValue = sharedPreferences.getInt("Литература", 0);
+        int literatureValue = sharedPreferences.getInt(categoryTitle, 0);
         if(literatureValue<correctAnswersCount*5){
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt("Литература", correctAnswersCount*5);
+            editor.putInt(categoryTitle, correctAnswersCount*5);
             editor.apply();
         }
 // Создаем и отображаем AlertDialog
@@ -224,6 +224,12 @@ public class QuizActivity extends AppCompatActivity {
                 return 2;
             case "Игры":
                 return 3;
+            case "Спорт":
+                return 4;
+            case "Политика":
+                return 5;
+            case "Страны":
+                return 6;
             default:
                 return 1;
         }

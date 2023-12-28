@@ -31,7 +31,6 @@
     import java.io.PrintWriter;
     import java.net.Socket;
     import java.net.UnknownHostException;
-    import com.example.quickquiz.ConnectionManager;
     public class MainActivity extends AppCompatActivity {
 
         private TextView responseTextView;
