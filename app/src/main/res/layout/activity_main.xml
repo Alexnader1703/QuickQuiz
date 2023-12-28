@@ -13,20 +13,21 @@
         android:layout_height="120dp"
         android:background="@color/bar">
 
+
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="350dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="339dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@id/name"
             android:adjustViewBounds="true"
             android:backgroundTint="#FE6440"
             android:contentDescription="Logout Button"
-            android:scaleType="fitCenter"
+            android:scaleType="fitStart"
             android:src="@drawable/logout_90894" />
-
 
         <TextView
             android:id="@+id/name"
@@ -39,7 +40,7 @@
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
             android:text="Alexandr Cheban"
-            android:textSize="20dp"></TextView>
+            android:textSize="25dp"></TextView>
 
 
 

@@ -41,12 +41,14 @@ public class QuizActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private String categoryTitle;
     private int categoryPercentage;
+    private TextView correct;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
         // Инициализация UI-элементов
+        correct=findViewById(R.id.otvet);
         textViewQuestion = findViewById(R.id.textViewQuestion);
         buttonAnswer1 = findViewById(R.id.buttonAnswer1);
         buttonAnswer2 = findViewById(R.id.buttonAnswer2);
@@ -134,7 +136,8 @@ public class QuizActivity extends AppCompatActivity {
         // Логика проверки ответа
         if (selectedAnswer == currentQuestion.getCorrectAnswerIndex()) {
             Log.d("Проверка ответа", Integer.toString(currentQuestion.getCorrectAnswerIndex()));
-            correctAnswersCount++; // Увеличиваем счет правильных ответов
+            correctAnswersCount++;
+
         } else {
             Log.d("Проверка ответа", Integer.toString(currentQuestion.getCorrectAnswerIndex()));
         }
@@ -152,6 +155,10 @@ public class QuizActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                if(Integer.parseInt(correct.getText().toString())!=correctAnswersCount){
+                    correct.setText(String.valueOf(correctAnswersCount));// Увеличиваем счет правильных ответов
+                }
                 // Восстановление цвета кнопки
                 setButtonColor(selectedButton, R.color.defaultButtonColor);
 
@@ -161,7 +168,7 @@ public class QuizActivity extends AppCompatActivity {
                     showQuestion(questions.get(currentQuestionIndex));
                 } else {
                     // Если вопросы закончились, показываем результат
-                    showResult();
+                    showResult(" Вы прошли тест за "+(100 - Integer.parseInt(time.getText().toString())));
                 }
             }
         }, 500); // 1000 миллисекунд = 1 секунда
@@ -181,7 +188,7 @@ public class QuizActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                showResult();
+                showResult("Вы не успели пройти тест до конца");
             }
         };
 
@@ -192,27 +199,36 @@ public class QuizActivity extends AppCompatActivity {
         int color = ContextCompat.getColor(this, colorRes);
         button.setBackgroundColor(color);
     }
-    private  void showResult(){
-        String message = "Поздравляем! Вы ответили правильно на " + correctAnswersCount + " вопросов! Вы прошли тест за " + time.getText() + ". Продолжайте в том же духе!";
-        SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
-        int literatureValue = sharedPreferences.getInt(categoryTitle, 0);
-        if(literatureValue<correctAnswersCount*5){
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(categoryTitle, correctAnswersCount*5);
-            editor.apply();
-        }
+    private  void showResult(String vivod){
+        try{
+
+            String message = "Поздравляем! Вы ответили правильно на " + correctAnswersCount + " вопросов! " +vivod;
+            SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
+            int literatureValue = sharedPreferences.getInt(categoryTitle, 0);
+            if(literatureValue<correctAnswersCount*5){
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(categoryTitle, correctAnswersCount*5);
+                editor.apply();
+            }
 // Создаем и отображаем AlertDialog
-        new AlertDialog.Builder(this)
-                .setTitle("Результаты теста")
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent mainIntent = new Intent(QuizActivity.this, MainActivity.class);
-                        startActivity(mainIntent);
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
+            new AlertDialog.Builder(this)
+                    .setTitle("Результаты теста")
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent mainIntent = new Intent(QuizActivity.this, MainActivity.class);
+                            startActivity(mainIntent);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .show();
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            Intent mainIntent = new Intent(QuizActivity.this, MainActivity.class);
+            startActivity(mainIntent);
+        }
 
     }
     private int Cat() {
@@ -223,13 +239,25 @@ public class QuizActivity extends AppCompatActivity {
             case "Музыка":
                 return 2;
             case "Игры":
-                return 3;
+                return 2;
             case "Спорт":
                 return 4;
             case "Политика":
                 return 5;
             case "Страны":
                 return 6;
+            case "Аниме":
+                return 7;
+            case "Древняя русь":
+                return 8;
+            case "Космос":
+                return 9;
+            case "Хип-хоп":
+                return 10;
+            case "Фильмы":
+                return 11;
+            case "Животные":
+                return 12;
             default:
                 return 1;
         }

@@ -42,6 +42,18 @@ public class Registration extends AppCompatActivity {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putBoolean("loggedIn", true);
                             editor.putString("login", nick.getText().toString());
+                            editor.putInt("Литература", 0);
+                            editor.putInt("Музыка", 0);
+                            editor.putInt("Игры", 0);
+                            editor.putInt("Спорт", 0);
+                            editor.putInt("Политика", 0);
+                            editor.putInt("Страны", 0);
+                            editor.putInt("Аниме", 0);
+                            editor.putInt("Древняя русь", 0);
+                            editor.putInt("Космос", 0);
+                            editor.putInt("Хип-хоп", 0);
+                            editor.putInt("Фильмы", 0);
+                            editor.putInt("Животные", 0);
                             editor.apply();
                             // Переход на следующую активность
                             Intent intent = new Intent(Registration.this, MainActivity.class);

@@ -43,12 +43,24 @@ public class CategoryFragment extends Fragment implements OnCategoryClickListene
         int sportValue = sharedPreferences.getInt("Спорт", 0);
         int fValue = sharedPreferences.getInt("Политика", 0);
         int sValue = sharedPreferences.getInt("Страны", 0);
+        int AValue = sharedPreferences.getInt("Аниме", 0);
+        int dValue = sharedPreferences.getInt("Древняя русь", 0);
+        int kValue = sharedPreferences.getInt("Космос", 0);
+        int hValue = sharedPreferences.getInt("Хип-хоп", 0);
+        int filmValue = sharedPreferences.getInt("Фильмы", 0);
+        int gValue = sharedPreferences.getInt("Животные", 0);
         Category priv1= new Category("Литература", literatureValue);
         Category priv2= new Category("Музыка", muzValue);
         Category priv3= new Category("Игры", gameValue);
         Category priv4= new Category("Спорт", sportValue);
         Category priv5= new Category("Политика", fValue);
         Category priv6= new Category("Страны", sValue);
+        Category priv7= new Category("Аниме", AValue);
+        Category priv8= new Category("Древняя русь", dValue);
+        Category priv9= new Category("Космос", kValue);
+        Category priv10= new Category("Хип-хоп", hValue);
+        Category priv11= new Category("Фильмы", filmValue);
+        Category priv12= new Category("Животные", gValue);
 
         List<Category> categories = new ArrayList<>();
         categories.add(priv1);
@@ -57,6 +69,12 @@ public class CategoryFragment extends Fragment implements OnCategoryClickListene
         categories.add(priv4);
         categories.add(priv5);
         categories.add(priv6);
+        categories.add(priv7);
+        categories.add(priv8);
+        categories.add(priv9);
+        categories.add(priv10);
+        categories.add(priv11);
+        categories.add(priv12);
 
         return categories;
     }
