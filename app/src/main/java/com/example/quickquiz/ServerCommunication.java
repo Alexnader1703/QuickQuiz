@@ -25,7 +25,7 @@ public class ServerCommunication {
     private BufferedReader in;
 
     private static final String SERVER_ADDRESS = "82.179.140.18";
-    private static final int SERVER_PORT = 45104;
+    private static final int SERVER_PORT = 45103;
 
     private ServerCommunication() throws Exception {
         socket = new Socket(SERVER_ADDRESS, SERVER_PORT);

@@ -1,20 +1,22 @@
 package com.example.quickquiz;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements OnCategoryClickListener {
 
     public CategoryFragment() {
         // Required empty public constructor
@@ -27,16 +29,20 @@ public class CategoryFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewCategories);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
-        CategoryAdapter adapter = new CategoryAdapter(getCategories());
+        CategoryAdapter adapter = new CategoryAdapter(getCategories(), this); // передаем this в качестве слушателя
         recyclerView.setAdapter(adapter);
 
         return view;
     }
 
     private List<Category> getCategories() {
-        Category priv1= new Category("Литература", 24);
-        Category priv2= new Category("Музыка", 94);
-        Category priv3= new Category("Игры", 0);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyApp", Context.MODE_PRIVATE);
+        int literatureValue = sharedPreferences.getInt("Литература", 0);
+        int muzValue = sharedPreferences.getInt("muzValue", 0);
+        int gameValue = sharedPreferences.getInt("gameValue", 0);
+        Category priv1= new Category("Литература", literatureValue);
+        Category priv2= new Category("Музыка", muzValue);
+        Category priv3= new Category("Игры", gameValue);
 
         List<Category> categories = new ArrayList<>();
         categories.add(priv1);
@@ -44,5 +50,18 @@ public class CategoryFragment extends Fragment {
         categories.add(priv3);
 
         return categories;
+    }
+
+    @Override
+    public void onCategoryClick(Category category) {
+        Log.d("CategoryFragment", "Нажата категория: " + category.getTitle());
+        Intent intent = new Intent(getActivity(), QuizActivity.class);
+
+        // Передаем информацию о выбранной категории в новую активность
+        intent.putExtra("categoryTitle", category.getTitle());
+        intent.putExtra("categoryPercentage", category.getCorrectAnswersPercentage());
+
+        // Запускаем новую активность
+        startActivity(intent);
     }
 }

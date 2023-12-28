@@ -4,4 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bg">#FFA540</color>
     <color name="bar">#FF6440</color>
+    <color name="colorCorrect">#008000</color> <!-- Зеленый цвет -->
+    <color name="colorIncorrect">#ff2400</color>
+    <color name="defaultButtonColor">#6750a4</color><!-- Красный цвет -->
 </resources>
